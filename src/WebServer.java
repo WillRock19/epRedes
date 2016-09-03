@@ -24,45 +24,63 @@ public final class WebServer
 			// Criar um novo thread para processar a requisição.
 			Thread thread = new Thread(request);
 			//Iniciar o thread.
-			thread.start();
+			thread.start();	
+		}
+	}
+}
 
-			
+final class HttpRequest implements Runnable
+{
+	final static String CRLF = "\r\n";
+	private Socket socket;
+	
+	public HttpRequest(Socket socket) throws Exception
+	{
+		this.socket = socket;
+	}
+	
+	// Implemente o método run() da interface Runnable.
+	public void run()
+	{
+		try{
+			processRequest();
+		} 
+		catch (Exception e){
+			System.out.println("An error has occurred when processing the request!\n");
+			System.out.println(e);
 		}
 	}
 	
-	static final class HttpRequest implements Runnable
+	private void processRequest() throws Exception
 	{
-		final static String CRLF = "\r\n";
-		private Socket socket;
+		// Obter uma referência para os trechos de entrada e saída do socket.
+		InputStream byteReader = socket.getInputStream();
+		DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 		
-		public HttpRequest(Socket socket) throws Exception
-		{
-			this.socket = socket;
-		}
 		
-		// Implemente o método run() da interface Runnable.
-		public void run()
-		{
-			try{
-				processRequest();
-			} 
-			catch (Exception e){
-				System.out.println("An error has occurred when processing the request!\n");
-				System.out.println(e);
-			}
-		}
-		
-		private void processRequest() throws Exception
-		{
-			// Obter uma referência para os trechos de entrada e saída do socket.
-			InputStream is = this.socket.getInputStream();
-			DataOutputStream os = new DataOutputStream(this.socket.getOutputStream());
-			
-			
+		BufferedReader lineReader = new BufferedReader(new InputStreamReader(byteReader));
 
+		// Read request line from HTTP request.
+		String requestLine = lineReader.readLine();
+		
+		//  Exibir a linha de requisição.
+		System.out.println();
+		System.out.println("\n\n\nA LINHA DE REQUISIÇÃO EH: \n\n");
+		System.out.println(requestLine);
+
+		
+		// Obter e exibir as linhas de cabeçalho.
+		String headerLine = null;
+		while ((headerLine = lineReader.readLine()).length() != 0) 
+		{
+			System.out.println(headerLine);
 		}
+		
+		// Feche as cadeias e socket.
+		os.close();
+		lineReader.close();
+		socket.close();
 	}
-
 }
 
 
