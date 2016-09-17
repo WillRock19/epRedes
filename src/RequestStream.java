@@ -56,6 +56,19 @@ public class RequestStream
 		outputStream.close();
 		lineReader.close();
 	}
+		
+	public void sendFileBytesToOutputStream(FileInputStream inputStream) throws Exception
+	{
+		// Build buffer to Store bytes for the socket.
+		byte[] buffer = createOneKbyteArray();
+		int bytes = 0;
+		
+		// Copy required file to socket outputStream.
+		while((bytes = inputStream.read(buffer)) != -1 ) 
+		{
+			outputStream.write(buffer, 0, bytes);
+		}
+	}
 	
 	private void defineByteReader(Socket socket) throws Exception
 	{
@@ -64,16 +77,21 @@ public class RequestStream
 	
 	private void defineOutputStream(Socket socket) throws Exception
 	{
-		this.outputStream = new DataOutputStream(socket.getOutputStream());
+		outputStream = new DataOutputStream(socket.getOutputStream());
 	}
 	
 	private void defineLineReader()
 	{
-		this.lineReader = new BufferedReader(new InputStreamReader(byteReader));
+		lineReader = new BufferedReader(new InputStreamReader(byteReader));
 	}
 	
 	private void defineRequestLine() throws Exception
 	{
-		this.requestLine = lineReader.readLine();
+		requestLine = lineReader.readLine();
+	}
+	
+	private byte[] createOneKbyteArray()
+	{
+		return new byte[1024];
 	}
 }

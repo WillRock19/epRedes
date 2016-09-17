@@ -1,6 +1,4 @@
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 final class HttpRequest implements Runnable
 {
@@ -31,41 +29,19 @@ final class HttpRequest implements Runnable
 		
 		stream.printRequestLine();
 		stream.printRequestHeaderLines();
-			
-		// Extrair o nome do arquivo a linha de requisi��o.
-		StringTokenizer tokens = new StringTokenizer(stream.requestLine());
 		
-		// pular o m�todo, que deve ser �GET�
-		tokens.nextToken(); 
-		
-		String fileName = tokens.nextToken();
-		
-		// Acrescente um �.� de modo que a requisi��o do arquivo esteja dentro do diret�rio atual.
-		fileName = "." + fileName;
-		
-		// Abrir o arquivo requisitado.
-		FileInputStream fis = null;
-		boolean fileExists = true;
-		
-		try 
-		{
-			fis = new FileInputStream(fileName);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			fileExists = false;
-		}
-
+		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
+		fileBuilder.openRequestedFile();
 		
 		// Construir a mensagem de resposta.
 		String statusLine = null;
 		String contentTypeLine = null;
 		String entityBody = null;
 		
-		if(fileExists) 
+		if(fileBuilder.fileExists()) 
 		{
 			statusLine = "HTTP/1.0 200" + CRLF;
-			contentTypeLine = "Content-type: " + contentType(fileName) + CRLF;
+			contentTypeLine = "Content-type: " + contentType(fileBuilder.fileName()) + CRLF;
 		} 
 		else 
 		{
@@ -86,10 +62,10 @@ final class HttpRequest implements Runnable
 		stream.sendToOutputStream(CRLF);
 
 		// Enviar o corpo da entidade.
-		if(fileExists) 
+		if(fileBuilder.fileExists()) 
 		{
-			sendBytes(fis, stream.outputStream());
-			fis.close();
+			stream.sendFileBytesToOutputStream(fileBuilder.file());
+			fileBuilder.closeFileStream();
 		} 
 		else 
 		{
@@ -99,18 +75,6 @@ final class HttpRequest implements Runnable
 		//Close writers and socket
 		stream.closeOutputStreamAndLineReader();
 		socket.close();
-	}
-	
-	private static void sendBytes(FileInputStream fis, OutputStream os) throws Exception
-	{
-		// Construir um buffer de 1K para comportar os bytes no caminho para o socket.
-		byte[] buffer = new byte[1024];
-		int bytes = 0;
-		
-		// Copiar o arquivo requisitado dentro da cadeia de sa�da do socket.
-		while((bytes = fis.read(buffer)) != -1 ) {
-			os.write(buffer, 0, bytes);
-		}
 	}
 	
 	private static String contentType(String fileName)
