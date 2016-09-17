@@ -32,15 +32,15 @@ final class HttpRequest implements Runnable
 		stream.printRequestLine();
 		stream.printRequestHeaderLines();
 			
-		// Extrair o nome do arquivo a linha de requisição.
+		// Extrair o nome do arquivo a linha de requisiï¿½ï¿½o.
 		StringTokenizer tokens = new StringTokenizer(stream.requestLine());
 		
-		// pular o método, que deve ser “GET”
+		// pular o mï¿½todo, que deve ser ï¿½GETï¿½
 		tokens.nextToken(); 
 		
 		String fileName = tokens.nextToken();
 		
-		// Acrescente um “.” de modo que a requisição do arquivo esteja dentro do diretório atual.
+		// Acrescente um ï¿½.ï¿½ de modo que a requisiï¿½ï¿½o do arquivo esteja dentro do diretï¿½rio atual.
 		fileName = "." + fileName;
 		
 		// Abrir o arquivo requisitado.
@@ -64,25 +64,25 @@ final class HttpRequest implements Runnable
 		
 		if(fileExists) 
 		{
-			statusLine = "Respondendo requisição";
+			statusLine = "HTTP/1.0 200" + CRLF;
 			contentTypeLine = "Content-type: " + contentType(fileName) + CRLF;
 		} 
 		else 
 		{
-			statusLine = "Página não encontrada";
-			contentTypeLine = "no content";
+			statusLine = "HTTP/1.0 404" + CRLF;
+			contentTypeLine = "text/html" + CRLF;
 			entityBody = "<HTML>" +
 				"<HEAD><TITLE>Not Found</TITLE></HEAD>" +
-				"<BODY>Not Found</BODY></HTML>";
+				"<BODY>Not Found</BODY></HTML>" + CRLF;
 		}
 		
 		// Enviar a linha de status.
 		stream.sendToOutputStream(statusLine);
 
-		// Enviar a linha de tipo de conteúdo.
+		// Enviar a linha de tipo de conteï¿½do.
 		stream.sendToOutputStream(contentTypeLine);
 
-		// Enviar uma linha em branco para indicar o fim das linhas de cabeçalho.
+		// Enviar uma linha em branco para indicar o fim das linhas de cabeï¿½alho.
 		stream.sendToOutputStream(CRLF);
 
 		// Enviar o corpo da entidade.
@@ -107,7 +107,7 @@ final class HttpRequest implements Runnable
 		byte[] buffer = new byte[1024];
 		int bytes = 0;
 		
-		// Copiar o arquivo requisitado dentro da cadeia de saída do socket.
+		// Copiar o arquivo requisitado dentro da cadeia de saï¿½da do socket.
 		while((bytes = fis.read(buffer)) != -1 ) {
 			os.write(buffer, 0, bytes);
 		}
