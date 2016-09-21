@@ -1,25 +1,16 @@
 import java.io.*;
-import java.util.StringTokenizer;
 
 public class RequestFileBuilder 
 {
-	private StringTokenizer tokens;
 	private String fileName;
 	private FileInputStream file;
 	private boolean fileExists;
 	
 	public RequestFileBuilder(RequestStream stream)
-	{
-		
-		// Extract file name from requestLine
-		generateTokensWithFileNameInRequestLine(stream);
-		
-		// Jump request method specification, that we assume is a GET type
-		advanceAToken();
-		
+	{		
 		// Define File Name
-		defineFileNameWithTokens();
-		defineFileNameAsInCurrentDirectory();
+		defineFileNameUsingRequestedURI(stream);
+		establishFileNameAsInCurrentDirectory();
 	}
 	
 	public void openRequestedFile()
@@ -55,22 +46,12 @@ public class RequestFileBuilder
 		file.close();
 	}
 	
-	private void generateTokensWithFileNameInRequestLine(RequestStream stream)
+	private void defineFileNameUsingRequestedURI(RequestStream stream)
 	{
-		tokens = new StringTokenizer(stream.requestLine());
+		fileName = stream.requestedURI();
 	}
 	
-	private void advanceAToken()
-	{
-		tokens.nextToken();
-	}
-	
-	private void defineFileNameWithTokens()
-	{
-		fileName = tokens.nextToken();
-	}
-	
-	private void defineFileNameAsInCurrentDirectory()
+	private void establishFileNameAsInCurrentDirectory()
 	{
 		fileName = "." + fileName;
 	}

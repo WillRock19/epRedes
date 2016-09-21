@@ -6,7 +6,7 @@ public class RequestStream
 	private InputStream byteReader;
 	private DataOutputStream outputStream;
 	private BufferedReader lineReader;
-	private String requestLine;
+	private RequestLine requestLine;
 	
 	public RequestStream(Socket socket) throws Exception
 	{
@@ -24,7 +24,7 @@ public class RequestStream
 	public void printRequestLine()
 	{
 		System.out.println();
-		System.out.println(requestLine);
+		System.out.println(requestLine.FullValue());
 	}
 	
 	public void printRequestHeaderLines() throws Exception
@@ -38,7 +38,12 @@ public class RequestStream
 	
 	public String requestLine()
 	{
-		return requestLine;
+		return requestLine.FullValue();
+	}
+	
+	public String requestedURI()
+	{
+		return requestLine.URI();
 	}
 	
 	public DataOutputStream outputStream()
@@ -87,7 +92,7 @@ public class RequestStream
 	
 	private void defineRequestLine() throws Exception
 	{
-		requestLine = lineReader.readLine();
+		requestLine = new RequestLine(lineReader.readLine());
 	}
 	
 	private byte[] createOneKbyteArray()
