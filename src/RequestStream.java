@@ -24,7 +24,7 @@ public class RequestStream
 	public void printRequestLine()
 	{
 		System.out.println();
-		System.out.println(requestLine.FullValue());
+		System.out.println(requestLine());
 	}
 	
 	public void printRequestHeaderLines() throws Exception
