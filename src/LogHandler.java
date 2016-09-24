@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -5,12 +6,12 @@ import java.util.logging.Logger;
 import helpers.CustomHeaderLogFormatter;
 import helpers.CustomMessageLogFormatter;
 
-public class ServerLogger 
+public class LogHandler 
 {
 	private FileHandler fileHandler;
 	private Logger logger;
 	
-	public ServerLogger()
+	public LogHandler()
 	{
 		configureLogger();
 	}
@@ -19,10 +20,29 @@ public class ServerLogger
 	{
 		logger.info(message);
 	}
+		
+	public void printLogInfo(String[] messages)
+	{
+		for(int index = 0; index < messages.length; index++)
+		{
+			logger.info(messages[index]);
+		}
+	}
 	
 	public void printLogWarning(String message)
 	{
 		logger.warning(message);
+	}
+	
+	public void setHeaderFormatter(String clientIP)
+	{
+		CustomHeaderLogFormatter formatter = new CustomHeaderLogFormatter(clientIP);
+		fileHandler.setFormatter(formatter);
+	}
+	
+	public void closeFileHandler()
+	{
+		fileHandler.close();
 	}
 	
 	private void configureLogger()
@@ -31,14 +51,15 @@ public class ServerLogger
 		{
 			defineLogger();
 			defineFileHandler();
-			setMessageFormatter();
 		}
 		catch (SecurityException e) 
 		{
+			System.out.println("An security error has occurred on logger configuration!");
             e.printStackTrace();
         } 
 		catch (IOException e) 
 		{
+			System.out.println("An IO error has occurred on logger configuration!");
             e.printStackTrace();
         }
 	}
@@ -56,28 +77,31 @@ public class ServerLogger
 	
 	private String defineFilePathName()
 	{
-		String directoryPath;		
+		String fullDirectory;
+		String directory;
+		
 		try
 		{
-			directoryPath = System.getProperty("user.dir");	
+			directory = System.getProperty("user.dir");	
 		}
 		catch(Exception e)
 		{
-			directoryPath = "./";
+			directory = ".\\";
 		}
 		
-		return directoryPath + "ServerLog.log";
+		fullDirectory = directory + "\\Log_Files";	
+		createDirectoryIfNotExists(fullDirectory);
+		
+		return fullDirectory + "\\ServerLog.log";
 	}
 	
-	private void setMessageFormatter()
+	private void createDirectoryIfNotExists(String directoryPath)
 	{
-		CustomMessageLogFormatter formatter = new CustomMessageLogFormatter();           
-		fileHandler.setFormatter(formatter);
-	}
-	
-	private void setHeaderFormatter()
-	{
-		CustomHeaderLogFormatter formatter = new CustomHeaderLogFormatter();
-		fileHandler.setFormatter(formatter);
+		File file = new File(directoryPath);
+		
+		if(!file.exists())
+		{
+			file.mkdirs();
+		}
 	}
 }

@@ -1,12 +1,16 @@
-import java.net.*;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 final class HttpRequest implements Runnable
 {
 	private Socket socket;
+	private LogHandler log;
 	
 	public HttpRequest(Socket socket) throws Exception
 	{
 		this.socket = socket;
+		this.log = new LogHandler();
 	}
 	
 	//Implementation of run() from Runnable interface.
@@ -23,10 +27,20 @@ final class HttpRequest implements Runnable
 	
 	private void processRequest() throws Exception
 	{
+
+		//Put in log the header informations about current connection
+		logConnectionInformation();
+		
 		//Create stream that will manipulate client request
 		RequestStream stream = new RequestStream(socket);
-		stream.printRequestLine();
-		stream.printRequestHeaderLines();
+		
+		//Save requestLine and other header lines to log file
+		log.printLogInfo("Requested method: " + stream.requestedMethod());
+		log.printLogInfo("Requested URI file: " + stream.requestedURI());
+		
+		//Print header Lines information in console
+/*		stream.printRequestLine();
+		stream.printRequestHeaderLines();*/
 		
 		//Create builder of requested file
 		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
@@ -40,5 +54,17 @@ final class HttpRequest implements Runnable
 		//Close stream and socket
 		stream.closeOutputStreamAndLineReader();
 		socket.close();
+		log.closeFileHandler();
 	}
+	
+	private void logConnectionInformation()
+	{
+		String clientIP = socket.getRemoteSocketAddress().toString();
+		
+		log.setHeaderFormatter(clientIP);
+		log.printLogInfo("Request captured time: " + new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(new Date()));
+		log.printLogInfo("Server Port: " + 6789);
+		log.printLogInfo("Client Adress: " + clientIP);
+		log.printLogInfo("Client Name: " + socket.getInetAddress().getHostName());
+	} 
 }

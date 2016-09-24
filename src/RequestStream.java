@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class RequestStream
 {
@@ -30,7 +31,9 @@ public class RequestStream
 	public void printRequestHeaderLines() throws Exception
 	{
 		String headerLine = null;
-		while ((headerLine = lineReader.readLine()).length() != 0) 
+		BufferedReader newReader = lineReader;
+		
+		while ((headerLine = newReader.readLine()).length() != 0) 
 		{
 			System.out.println(headerLine);
 		}
@@ -44,6 +47,11 @@ public class RequestStream
 	public String requestedURI()
 	{
 		return requestLine.URI();
+	}
+	
+	public String requestedMethod()
+	{
+		return requestLine.Method();
 	}
 	
 	public DataOutputStream outputStream()
@@ -74,6 +82,30 @@ public class RequestStream
 			outputStream.write(buffer, 0, bytes);
 		}
 	}
+	
+	
+	
+	
+	
+	
+/*	public ArrayList<String> getAllLinesInRequest() throws Exception
+	{
+		String currentLine;
+		ArrayList<String> allLines = new ArrayList<String>();
+		BufferedReader newReader = lineReader;
+			
+		while ((currentLine = newReader.readLine()).length() != 0) 
+		{
+			allLines.add(currentLine);
+		}
+				
+		return allLines;
+	}
+	*/
+	
+	
+	
+	
 	
 	private void defineByteReader(Socket socket) throws Exception
 	{

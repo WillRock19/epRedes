@@ -14,7 +14,7 @@ public final class WebServer
 		{
 			// Listens request of TCP connection			
 			Socket connectionSocket = mySocket.accept();
-			
+						
 			//Build object to process HttpRequest
 			HttpRequest request = new HttpRequest(connectionSocket);
 			
