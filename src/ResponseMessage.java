@@ -27,7 +27,7 @@ public class ResponseMessage
 		}
 	}
 	
-	public void sendMessagePropertiesToOutputStream() throws Exception
+	public void sendMessageHeaderToOutputStream() throws Exception
 	{
 		// Enviar a linha de status.
 		stream.sendToOutputStream(statusLine);
@@ -67,8 +67,6 @@ public class ResponseMessage
 			"<HEAD><TITLE>Not Found</TITLE></HEAD>" +
 			"<BODY>Not Found</BODY></HTML>" + CRLF;
 	}
-	
-	
 	
 	private String contentType(String fileName)
 	{

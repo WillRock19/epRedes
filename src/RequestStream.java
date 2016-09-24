@@ -83,8 +83,10 @@ public class RequestStream
 		}
 	}
 	
-	
-	
+	public int outputStreamSize()
+	{
+		return outputStream.size();
+	}
 	
 	
 	

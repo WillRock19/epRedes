@@ -1,10 +1,12 @@
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import helpers.CustomHeaderLogFormatter;
-import helpers.CustomMessageLogFormatter;
 
 public class LogHandler 
 {
@@ -43,6 +45,17 @@ public class LogHandler
 	public void closeFileHandler()
 	{
 		fileHandler.close();
+	}
+	
+	public void printInLogTheConnectionInformation(Socket socket)
+	{
+		String clientIP = socket.getRemoteSocketAddress().toString();
+		
+		setHeaderFormatter(clientIP);
+		printLogInfo("Request captured time: " + new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(new Date()));
+		printLogInfo("Server Port: " + 6789);
+		printLogInfo("Client Adress: " + clientIP);
+		printLogInfo("Client Name: " + socket.getInetAddress().getHostName());
 	}
 	
 	private void configureLogger()
