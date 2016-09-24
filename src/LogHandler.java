@@ -12,7 +12,7 @@ public class LogHandler
 {
 	private FileHandler fileHandler;
 	private Logger logger;
-	private String logFileName = "\\ServerLog.txt";
+	private String logFileName = "\\ServerLog.log";
 	
 	public LogHandler()
 	{

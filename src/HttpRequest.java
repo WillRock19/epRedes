@@ -24,7 +24,7 @@ final class HttpRequest implements Runnable
 	}
 	
 	private void processRequest() throws Exception
-	{
+	{		
 		//Put in log the header informations about current connection
 		log.printInLogTheConnectionInformation(socket);
 		
@@ -35,10 +35,55 @@ final class HttpRequest implements Runnable
 		log.printLogInfo("Requested method: " + stream.requestedMethod());
 		log.printLogInfo("Requested URI file: " + stream.requestedURI());
 		
-		//Print header Lines information in console
-/*		stream.printRequestLine();
-		stream.printRequestHeaderLines();*/
+		stream.printRequestLine();
+		stream.printRequestHeaderLines();
 		
+		
+		
+		
+		
+		
+		
+		
+		if(stream.requestedURI().toLowerCase().contains("restrict-access".toLowerCase()))
+		{
+			String CRLF = "\r\n";
+			String statusLine = "HTTP/1.0 401" + CRLF;
+			String WWW_Authentication = "WWW-Authenticate: Basic realm='myRealm'" + CRLF;
+			
+			
+			stream.sendToOutputStream(statusLine);
+			stream.sendToOutputStream(WWW_Authentication);
+			stream.sendToOutputStream(CRLF);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+/*		
 		//Create builder of requested file
 		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
 		fileBuilder.openRequestedFile();
@@ -59,7 +104,7 @@ final class HttpRequest implements Runnable
 		
 		//Saving last info in log file
 		log.printLogInfo("Size of entity's body message (in bytes): " + (stream.outputStreamSize() - headerSize));			
-		log.printLogInfo("Total size of response message: " + stream.outputStreamSize());
+		log.printLogInfo("Total size of response message: " + stream.outputStreamSize());*/
 		
 		//Close stream and socket
 		stream.closeOutputStreamAndLineReader();

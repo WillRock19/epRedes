@@ -1,6 +1,9 @@
-import java.io.*;
-import java.net.*;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
 
 public class RequestStream
 {
@@ -18,7 +21,7 @@ public class RequestStream
 		//Create line reader to read input char stream
 		defineLineReader();
 				
-		// Read request line from HTTP request.
+		// Read request line from HTTP client request.
 		defineRequestLine();
 	}
 	
@@ -37,6 +40,8 @@ public class RequestStream
 		{
 			System.out.println(headerLine);
 		}
+		
+		newReader.close();
 	}
 	
 	public String requestLine()
@@ -132,5 +137,26 @@ public class RequestStream
 	private byte[] createOneKbyteArray()
 	{
 		return new byte[1024];
+	}
+	
+	private void defineHeaderJson() throws Exception
+	{
+		String newLine = lineReaderInString();
+
+		
+		
+	}
+	
+	private String lineReaderInString() throws Exception
+	{
+		StringBuilder sb = new StringBuilder();
+
+	    String line;
+	    while ((line = lineReader.readLine()) != null) 
+	    {
+	        sb.append(line);
+	    }
+	    
+	    return sb.toString();
 	}
 }
