@@ -12,6 +12,7 @@ public class LogHandler
 {
 	private FileHandler fileHandler;
 	private Logger logger;
+	private String logFileName = "\\ServerLog.txt";
 	
 	public LogHandler()
 	{
@@ -105,7 +106,7 @@ public class LogHandler
 		fullDirectory = directory + "\\Log_Files";	
 		createDirectoryIfNotExists(fullDirectory);
 		
-		return fullDirectory + "\\ServerLog.log";
+		return fullDirectory + logFileName;
 	}
 	
 	private void createDirectoryIfNotExists(String directoryPath)

@@ -7,7 +7,7 @@ public final class WebServer
 		int port = 6789;
 		
 		//Establish a listenning socket
-		ServerSocket mySocket = new ServerSocket(5000);
+		ServerSocket mySocket = new ServerSocket(port);
 				
 		// Process request in a HTTP service in an infinit loop
 		while (true)  
