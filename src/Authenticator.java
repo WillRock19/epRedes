@@ -15,7 +15,7 @@ public class Authenticator
 	public Authenticator(RequestStream requestStream)
 	{
 		this.requestStream = requestStream;
-		this.messager = new ResponseMessage(requestStream);
+		this.messager = new ResponseMessage();
 	}
 	
 	public boolean requestedUriIsRestrict()

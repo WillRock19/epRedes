@@ -19,9 +19,9 @@ public class HTMLGenerator
 		return headerOpen + createHeadTag("Index") + createBodyTag("This is the Index Page") + headerClose;
 	}
 	
-	public String listPage(ArrayList<String> list, String pageTitle)
+	public String listPage(ArrayList<String> list, String directoryName)
 	{ 
-		return headerOpen + createHeadTag(pageTitle) + createBodyTag(createUlTag(list)) + headerClose ;  
+		return headerOpen + createHeadTag(defineListPageTitle(directoryName)) + createBodyTag(createUlTag(list, directoryName)) + headerClose ;  
 	}
 	
 	private String createHeadTag(String titleContent)
@@ -39,20 +39,30 @@ public class HTMLGenerator
 		return String.format("<BODY> %s </BODY>", bodyContent);
 	}
 	
-	private String createUlTag(ArrayList<String> list)
+	private String createUlTag(ArrayList<String> list, String directoryName)
 	{
 		String liTags = "";
 		
 		for(String element : list)
 		{
-			liTags = createLiTag(element);
+			liTags += createLiTag(element, directoryName);
 		}
 		
 		return String.format("<UL> %s </UL>", liTags);
 	}
 	
-	private String createLiTag(String liContent)
+	private String createLiTag(String liContent, String directoryName)
 	{
-		return String.format("<LI> %s </LI>", liContent);
+		return String.format("<LI> %s </LI>", creatLinkTag(liContent, directoryName));
+	}
+	
+	private String creatLinkTag(String content, String directoryName)
+	{
+		return String.format("<a href='%s'> %s </a>", (directoryName + content), content);
+	}
+	
+	private String defineListPageTitle(String directoryName)
+	{
+		return String.format("Listing %s Directory", directoryName);
 	}
 }
