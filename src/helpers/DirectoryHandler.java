@@ -3,25 +3,13 @@ package helpers;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FileHandler 
+public class DirectoryHandler 
 {
 	private File element;
 	
-	public FileHandler(String path)
+	public DirectoryHandler(String path) throws Exception
 	{
-		try
-		{
-			this.element = new File(path);
-		}
-		catch(Exception e)
-		{
-			
-		}
-	}
-	
-	public boolean isFile()
-	{
-		return element.isFile();
+		this.element = new File(path);
 	}
 	
 	public boolean isDirectory()
@@ -42,7 +30,5 @@ public class FileHandler
 			return list;
 		}
 		return null;
-	}
-	
-	
+	}	
 }

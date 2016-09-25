@@ -1,19 +1,17 @@
+import helpers.HTMLGenerator;
+import helpers.MessageProperties;
 
 public class ResponseMessage 
 {
-	//End of each HTTP request, with a carriage return (CR) and a line feed (LF).
-	//CRLF, basically, is an ASCII specification that says to "jump a line and go to the beginning of this new line".
-	final static String CRLF = "\r\n";
-	private String statusLine = null;
-	private String contentTypeLine = null;
-	private String entityBody = null;
-	private String WWW_Authentication = null;
-	
+	private MessageProperties messageProperties;
+	private HTMLGenerator htmlGenerator; 	
 	private RequestStream stream;
 
 	public ResponseMessage(RequestStream stream)
 	{
 		this.stream = stream;
+		this.htmlGenerator = new HTMLGenerator();
+		this.messageProperties = new MessageProperties();
 	}
 		
 	public void createResponseMessage(boolean fileExists, String fileName)
@@ -24,66 +22,45 @@ public class ResponseMessage
 		} 
 		else 
 		{
-			defineNotFindMessageProperties();
+			defineNotFoundMessageProperties();
 		}
 	}
 	
-	public void sendMessageHeaderToOutputStream() throws Exception
+	public void sendFileToOutputStream(RequestElementBuilder fileBuilder) throws Exception
 	{
-		// Enviar a linha de status.
-		stream.sendToOutputStream(statusLine);
-
-		// Enviar a linha de tipo de conteudo.
-		stream.sendToOutputStream(contentTypeLine);
-
-		// Enviar uma linha em branco para indicar o fim das linhas de cabecalho.
-		stream.sendToOutputStream(CRLF);
-	}
-	
-	public void sendNotAuthenticatedHeaderToOutputStream() throws Exception
-	{
-		// Enviar a linha de status.
-		stream.sendToOutputStream(statusLine);
-
-		// Enviar a linha de tipo de autenticacao.
-		stream.sendToOutputStream(WWW_Authentication);
-
-		// Enviar uma linha em branco para indicar o fim das linhas de cabecalho.
-		stream.sendToOutputStream(CRLF);
-	}
-	
-	public void sendFileToOutputStream(RequestFileBuilder fileBuilder) throws Exception
-	{
-		if(fileBuilder.fileExists()) 
+		if(fileBuilder.elementExists()) 
 		{
 			stream.sendFileBytesToOutputStream(fileBuilder.file());
 			fileBuilder.closeFileStream();
 		} 
 		else 
 		{
-			stream.sendToOutputStream(entityBody);
+			stream.sendToOutputStream(messageProperties.entityBody());
 		}
 	}
 	
 	public void defineNotAuthenticatedProperties()
 	{
-		statusLine = "HTTP/1.0 401" + CRLF;
-		WWW_Authentication = "WWW-Authenticate: Basic realm='myRealm'" + CRLF;
+		messageProperties.setStatusLine("HTTP/1.0 401");
+		messageProperties.setAuthentication("WWW-Authenticate: Basic realm='myRealm'");
+	}
+	
+	public MessageProperties properties()
+	{
+		return messageProperties;
 	}
 		
 	private void defineSuccessMessageProperties(String fileName)
 	{
-		statusLine = "HTTP/1.0 200" + CRLF;
-		contentTypeLine = "Content-type: " + contentType(fileName) + CRLF;
+		messageProperties.setStatusLine("HTTP/1.0 200");
+		messageProperties.setContentType("Content-type: " + contentType(fileName));
 	}
 	
-	private void defineNotFindMessageProperties()
+	private void defineNotFoundMessageProperties()
 	{
-		statusLine = "HTTP/1.0 404" + CRLF;
-		contentTypeLine = "Content-type: text/html" + CRLF;
-		entityBody = "<HTML>" +
-			"<HEAD><TITLE>Not Found</TITLE></HEAD>" +
-			"<BODY>Not Found</BODY></HTML>" + CRLF;
+		messageProperties.setStatusLine("HTTP/1.0 404");
+		messageProperties.setContentType("Content-type: text/html");
+		messageProperties.setEntityBody(htmlGenerator.NotFoundPage());
 	}
 		
 	private String contentType(String fileName)

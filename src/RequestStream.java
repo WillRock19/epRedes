@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import helpers.MessageProperties;
 import helpers.RequestHeader;
 
 public class RequestStream
@@ -105,21 +106,29 @@ public class RequestStream
 		return lineReader;
 	}
 	
-	
-/*	public ArrayList<String> getAllLinesInRequest() throws Exception
+	public void sendSimpleHeaderToOutputStream(MessageProperties message) throws Exception
 	{
-		String currentLine;
-		ArrayList<String> allLines = new ArrayList<String>();
-		BufferedReader newReader = lineReader;
-			
-		while ((currentLine = newReader.readLine()).length() != 0) 
-		{
-			allLines.add(currentLine);
-		}
-				
-		return allLines;
+		// Send status line to outputStream
+		sendToOutputStream(message.statusLine());
+
+		// Send contentType line to outputStream
+		sendToOutputStream(message.contentType());
+
+		// Send CRLF line to outputStream
+		sendToOutputStream(message.crlf());
 	}
-	*/
+	
+	public void sendNotAuthenticatedHeaderToOutputStream(MessageProperties message) throws Exception
+	{
+		// Enviar a linha de status.
+		sendToOutputStream(message.statusLine());
+
+		// Enviar a linha de tipo de autenticacao.
+		sendToOutputStream(message.authentication());
+
+		// Enviar uma linha em branco para indicar o fim das linhas de cabecalho.
+		sendToOutputStream(message.crlf());
+	}
 	
 	private void defineRequestHeader()
 	{

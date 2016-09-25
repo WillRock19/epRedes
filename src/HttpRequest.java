@@ -66,23 +66,23 @@ final class HttpRequest implements Runnable
 	
 	private void executeServerLogic(RequestStream stream) throws Exception
 	{
-		//Create builder of requested file
-		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
-		fileBuilder.openRequestedFile();
+		//Create builder of requested file or directory
+		RequestElementBuilder elementBuilder = new RequestElementBuilder(stream);
+		elementBuilder.open();
 		
 		//Create response message that will be send to client
 		ResponseMessage response = new ResponseMessage(stream);
-		response.createResponseMessage(fileBuilder.fileExists(), fileBuilder.fileName());
+		response.createResponseMessage(elementBuilder.elementExists(), elementBuilder.elementName());
 		
 		//Send created headers to output Stream
-		response.sendMessageHeaderToOutputStream();
+		stream.sendSimpleHeaderToOutputStream(response.properties());
 		
 		//Write number of bytes from outputStream in the log files 
 		int headerSize = stream.outputStreamSize();	
 		log.printLogInfo("Size of response message's header (in bytes): " + headerSize);
 		
 		//Send opened file to OutputStream
-		response.sendFileToOutputStream(fileBuilder);
+		response.sendFileToOutputStream(elementBuilder);
 		
 		//Saving last info in log file
 		log.printLogInfo("Size of entity's body message (in bytes): " + (stream.outputStreamSize() - headerSize));			

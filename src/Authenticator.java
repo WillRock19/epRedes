@@ -30,7 +30,7 @@ public class Authenticator
 			if(!userHasAuthenticated() || !userCredentialsAreValid())
 			{
 				messager.defineNotAuthenticatedProperties();
-				messager.sendNotAuthenticatedHeaderToOutputStream();
+				requestStream.sendNotAuthenticatedHeaderToOutputStream(messager.properties());
 				return false;
 			}
 			else
