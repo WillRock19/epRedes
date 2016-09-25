@@ -6,7 +6,7 @@ import java.util.Base64;
 
 public class Authenticator 
 {
-	private String validCredentials = "restrict-access";
+	private String validCredentials = "admin:senha123";
 	private String restrictUrl = "restrict-access";
 	private RequestStream requestStream;
 	private ResponseMessage messager;
@@ -23,42 +23,32 @@ public class Authenticator
 		return requestStream.requestedURI().toLowerCase().contains(restrictUrl.toLowerCase());
 	}
 	
-	public void AuthenticateAccess()
+	public boolean AuthenticateAccess()
 	{
 		try
 		{
-			if(!userHasAuthenticated())
+			if(!userHasAuthenticated() || !userCredentialsAreValid())
 			{
 				messager.defineNotAuthenticatedProperties();
 				messager.sendNotAuthenticatedHeaderToOutputStream();
+				return false;
 			}
 			else
 			{
-				testUserAuthentication();
+				return userCredentialsAreValid();
 			}
 		}
-		catch(Exception e){
+		catch(Exception e)
+		{
 			System.out.println(e);
+			return false;
 		}
 		
 	}
 	
-	
 	private boolean userHasAuthenticated()
 	{
 		return requestStream.RequestHeader().Authentication() != null;
-	}
-	
-	private void testUserAuthentication()
-	{
-		if(userCredentialsAreValid())
-		{
-			System.out.println("Valid credentials");
-		}
-		else
-		{
-			System.out.println("Invalid credentials");
-		}
 	}
 	
 	private boolean userCredentialsAreValid()
@@ -68,10 +58,9 @@ public class Authenticator
 	
 	private String decodeAuthentication()
 	{	
-		String[] authenticationData = requestStream.RequestHeader().Authentication().split(" ");
-		
-		
+		String[] authenticationData = requestStream.RequestHeader().Authentication().split(" ");	
 		byte[] decodedValue = Base64.getDecoder().decode(getUserInformationData(authenticationData));
+		
 		return new String(decodedValue, StandardCharsets.UTF_8);
 	}
 	
@@ -81,8 +70,7 @@ public class Authenticator
 		{
 			if(textIsBase64Encoded(authenticationData[i]))
 				return authenticationData[i];
-		}
-		
+		}	
 		return "";
 	}
 	

@@ -35,65 +35,38 @@ final class HttpRequest implements Runnable
 		log.printLogInfo("Requested method: " + stream.requestedMethod());
 		log.printLogInfo("Requested URI file: " + stream.requestedURI());
 		
-/*		stream.printRequestLine();
-		stream.printRequestHeaderLines();*/
+		//Authenticate access and process user request
+		authenticateAndExecuteRequest(stream);
+				
+		//Close stream and socket
+		stream.closeOutputStreamAndLineReader();
+		socket.close();
 		
+		//Closing log file handler
+		log.closeFileHandler();
+	}
+	
+	private void authenticateAndExecuteRequest(RequestStream stream) throws Exception
+	{
+		//Create authenticator object
 		Authenticator authenticator = new Authenticator(stream);
 		
-		if(!authenticator.requestedUriIsRestrict())
+		if(authenticator.requestedUriIsRestrict())
 		{
+			boolean authenticated = authenticator.AuthenticateAccess();
 			
+			if(authenticated) 
+				executeServerLogic(stream);
 		}
 		else
 		{
-			authenticator.AuthenticateAccess();
-		}
-		
-		
-		
-		
-		
-		
-/*		if(stream.requestedURI().toLowerCase().contains("restrict-access".toLowerCase()))
-		{
-			String CRLF = "\r\n";
-			String statusLine = "HTTP/1.0 401" + CRLF;
-			String WWW_Authentication = "WWW-Authenticate: Basic realm='myRealm'" + CRLF;
-			
-			
-			stream.sendToOutputStream(statusLine);
-			stream.sendToOutputStream(WWW_Authentication);
-			stream.sendToOutputStream(CRLF);
-		}*/
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-/*		//Create builder of requested file
+			executeServerLogic(stream);			
+		}	
+	}
+	
+	private void executeServerLogic(RequestStream stream) throws Exception
+	{
+		//Create builder of requested file
 		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
 		fileBuilder.openRequestedFile();
 		
@@ -113,13 +86,6 @@ final class HttpRequest implements Runnable
 		
 		//Saving last info in log file
 		log.printLogInfo("Size of entity's body message (in bytes): " + (stream.outputStreamSize() - headerSize));			
-		log.printLogInfo("Total size of response message: " + stream.outputStreamSize());*/
-		
-		//Close stream and socket
-		stream.closeOutputStreamAndLineReader();
-		socket.close();
-		
-		//Closing log file handler
-		log.closeFileHandler();
+		log.printLogInfo("Total size of response message: " + stream.outputStreamSize());
 	}
 }
