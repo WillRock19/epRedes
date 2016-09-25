@@ -71,8 +71,8 @@ final class HttpRequest implements Runnable
 		elementBuilder.open();
 		
 		//Create response message that will be send to client
-		ResponseMessage response = new ResponseMessage(stream);
-		response.createResponseMessage(elementBuilder.elementExists(), elementBuilder.elementName());
+		ResponseMessage response = new ResponseMessage();
+		response.createResponse(elementBuilder);	
 		
 		//Send created headers to output Stream
 		stream.sendSimpleHeaderToOutputStream(response.properties());
@@ -81,8 +81,8 @@ final class HttpRequest implements Runnable
 		int headerSize = stream.outputStreamSize();	
 		log.printLogInfo("Size of response message's header (in bytes): " + headerSize);
 		
-		//Send opened file to OutputStream
-		response.sendFileToOutputStream(elementBuilder);
+		//Send opened file to OutputStream or, if file does not exist, an entityBody
+		stream.sendFileToOutputStream(elementBuilder, response.properties());
 		
 		//Saving last info in log file
 		log.printLogInfo("Size of entity's body message (in bytes): " + (stream.outputStreamSize() - headerSize));			

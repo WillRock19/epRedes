@@ -6,9 +6,9 @@ import helpers.DirectoryHandler;
 
 public class RequestElementBuilder 
 {
-	private String elementName;
-	private FileInputStream file;
-	private DirectoryHandler directory;
+	private String elementName = null;
+	private FileInputStream file = null;
+	private DirectoryHandler directory = null;
 	private boolean elementExists;
 
 	public RequestElementBuilder(RequestStream stream)
@@ -58,6 +58,16 @@ public class RequestElementBuilder
 			return directory.listSubItens();
 		}
 		return null;
+	}
+	
+	public boolean isFile()
+	{
+		return file != null;
+	}
+	
+	public boolean isDirectory()
+	{
+		return directory.isDirectory();
 	}
 	
 	private void checkRequestedElementIsDirectory()

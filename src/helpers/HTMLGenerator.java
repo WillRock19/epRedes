@@ -1,5 +1,7 @@
 package helpers;
 
+import java.util.ArrayList;
+
 public class HTMLGenerator 
 {
 	private String headerOpen = "<HTML>";
@@ -14,17 +16,12 @@ public class HTMLGenerator
 	
 	public String IndexPage()
 	{ 
-		return "";  
+		return headerOpen + createHeadTag("Index") + createBodyTag("This is the Index Page") + headerClose;
 	}
 	
-	public String ListOfFilesPage()
+	public String listPage(ArrayList<String> list, String pageTitle)
 	{ 
-		return "";  
-	}
-	
-	public String FileContentPage()
-	{ 
-		return "";  
+		return headerOpen + createHeadTag(pageTitle) + createBodyTag(createUlTag(list)) + headerClose ;  
 	}
 	
 	private String createHeadTag(String titleContent)
@@ -42,4 +39,20 @@ public class HTMLGenerator
 		return String.format("<BODY> %s </BODY>", bodyContent);
 	}
 	
+	private String createUlTag(ArrayList<String> list)
+	{
+		String liTags = "";
+		
+		for(String element : list)
+		{
+			liTags = createLiTag(element);
+		}
+		
+		return String.format("<UL> %s </UL>", liTags);
+	}
+	
+	private String createLiTag(String liContent)
+	{
+		return String.format("<LI> %s </LI>", liContent);
+	}
 }

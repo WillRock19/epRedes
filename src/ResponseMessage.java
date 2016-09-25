@@ -1,15 +1,15 @@
+import java.util.ArrayList;
+
 import helpers.HTMLGenerator;
 import helpers.MessageProperties;
 
 public class ResponseMessage 
 {
 	private MessageProperties messageProperties;
-	private HTMLGenerator htmlGenerator; 	
-	private RequestStream stream;
+	private HTMLGenerator htmlGenerator;
 
-	public ResponseMessage(RequestStream stream)
+	public ResponseMessage()
 	{
-		this.stream = stream;
 		this.htmlGenerator = new HTMLGenerator();
 		this.messageProperties = new MessageProperties();
 	}
@@ -18,24 +18,31 @@ public class ResponseMessage
 	{
 		if(fileExists) 
 		{
-			defineSuccessMessageProperties(fileName);
+			defineSuccessProperties(fileName);
 		} 
 		else 
 		{
-			defineNotFoundMessageProperties();
+			defineNotFoundProperties();
 		}
 	}
 	
-	public void sendFileToOutputStream(RequestElementBuilder fileBuilder) throws Exception
+	public void createResponse(RequestElementBuilder element)
 	{
-		if(fileBuilder.elementExists()) 
+		if(element.elementExists())
 		{
-			stream.sendFileBytesToOutputStream(fileBuilder.file());
-			fileBuilder.closeFileStream();
-		} 
-		else 
+			if(element.isDirectory())
+			{
+				defineSuccessPropertiesToHTMLContent();
+				defineEntityBodyAsListPage(element.subItens(), element.elementName());
+			}
+			else
+			{
+				defineSuccessProperties(element.elementName());
+			}
+		}
+		else
 		{
-			stream.sendToOutputStream(messageProperties.entityBody());
+			defineNotFoundProperties();
 		}
 	}
 	
@@ -49,14 +56,26 @@ public class ResponseMessage
 	{
 		return messageProperties;
 	}
+	
+	private void defineEntityBodyAsListPage(ArrayList<String> list, String pageName)
+	{
+		messageProperties.setEntityBody(htmlGenerator.listPage(list, pageName));
+	}
 		
-	private void defineSuccessMessageProperties(String fileName)
+	private void defineSuccessProperties(String fileName)
 	{
 		messageProperties.setStatusLine("HTTP/1.0 200");
 		messageProperties.setContentType("Content-type: " + contentType(fileName));
 	}
 	
-	private void defineNotFoundMessageProperties()
+	private void defineSuccessPropertiesToHTMLContent()
+	{
+		messageProperties.setStatusLine("HTTP/1.0 200");
+		messageProperties.setContentType("Content-type: text/html");
+	}
+	
+	
+	private void defineNotFoundProperties()
 	{
 		messageProperties.setStatusLine("HTTP/1.0 404");
 		messageProperties.setContentType("Content-type: text/html");

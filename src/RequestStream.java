@@ -130,6 +130,19 @@ public class RequestStream
 		sendToOutputStream(message.crlf());
 	}
 	
+	public void sendFileToOutputStream(RequestElementBuilder fileBuilder, MessageProperties message) throws Exception
+	{
+		if(fileBuilder.elementExists() && fileBuilder.isFile()) 
+		{
+			sendFileBytesToOutputStream(fileBuilder.file());
+			fileBuilder.closeFileStream();
+		} 
+		else 
+		{
+			sendToOutputStream(message.entityBody());
+		}
+	}
+	
 	private void defineRequestHeader()
 	{
 		requestHeader = new RequestHeader(lineReader);
