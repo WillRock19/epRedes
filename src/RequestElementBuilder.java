@@ -67,7 +67,10 @@ public class RequestElementBuilder
 	
 	public boolean isDirectory()
 	{
-		return directory.isDirectory();
+		if(directory != null)
+			return directory.isDirectory();
+		
+		return false;
 	}
 	
 	private void checkRequestedElementIsDirectory()
