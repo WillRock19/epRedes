@@ -84,7 +84,7 @@ public class ResponseMessage
 		
 	private String contentType(String fileName)
 	{
-		if(fileName.endsWith(".htm") || fileName.endsWith(".html")) 
+		if(fileName.endsWith(".htm") || fileName.endsWith(".html") || fileName.endsWith(".txt")) 
 		{
 			return "text/html";
 		}
@@ -92,7 +92,7 @@ public class ResponseMessage
 		{
 			return "image/gif";
 		}
-		if(fileName.endsWith(".jpeg") || fileName.endsWith(".JPEG")) 
+		if(fileName.endsWith(".jpeg") || fileName.endsWith(".JPEG") || fileName.toLowerCase().endsWith(".jpg")) 
 		{
 			return "image/jpeg";
 		}
