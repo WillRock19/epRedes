@@ -7,14 +7,15 @@ public class ResponseMessage
 	private String statusLine = null;
 	private String contentTypeLine = null;
 	private String entityBody = null;
+	private String WWW_Authentication = null;
+	
 	private RequestStream stream;
 
 	public ResponseMessage(RequestStream stream)
 	{
 		this.stream = stream;
 	}
-	
-	
+		
 	public void createResponseMessage(boolean fileExists, String fileName)
 	{
 		if(fileExists) 
@@ -23,7 +24,7 @@ public class ResponseMessage
 		} 
 		else 
 		{
-			defineErrorMessageProperties();
+			defineNotFindMessageProperties();
 		}
 	}
 	
@@ -34,6 +35,18 @@ public class ResponseMessage
 
 		// Enviar a linha de tipo de conteudo.
 		stream.sendToOutputStream(contentTypeLine);
+
+		// Enviar uma linha em branco para indicar o fim das linhas de cabecalho.
+		stream.sendToOutputStream(CRLF);
+	}
+	
+	public void sendNotAuthenticatedHeaderToOutputStream() throws Exception
+	{
+		// Enviar a linha de status.
+		stream.sendToOutputStream(statusLine);
+
+		// Enviar a linha de tipo de autenticacao.
+		stream.sendToOutputStream(WWW_Authentication);
 
 		// Enviar uma linha em branco para indicar o fim das linhas de cabecalho.
 		stream.sendToOutputStream(CRLF);
@@ -52,14 +65,19 @@ public class ResponseMessage
 		}
 	}
 	
-	
+	public void defineNotAuthenticatedProperties()
+	{
+		statusLine = "HTTP/1.0 401" + CRLF;
+		WWW_Authentication = "WWW-Authenticate: Basic realm='myRealm'" + CRLF;
+	}
+		
 	private void defineSuccessMessageProperties(String fileName)
 	{
 		statusLine = "HTTP/1.0 200" + CRLF;
 		contentTypeLine = "Content-type: " + contentType(fileName) + CRLF;
 	}
 	
-	private void defineErrorMessageProperties()
+	private void defineNotFindMessageProperties()
 	{
 		statusLine = "HTTP/1.0 404" + CRLF;
 		contentTypeLine = "Content-type: text/html" + CRLF;
@@ -67,7 +85,7 @@ public class ResponseMessage
 			"<HEAD><TITLE>Not Found</TITLE></HEAD>" +
 			"<BODY>Not Found</BODY></HTML>" + CRLF;
 	}
-	
+		
 	private String contentType(String fileName)
 	{
 		if(fileName.endsWith(".htm") || fileName.endsWith(".html")) 

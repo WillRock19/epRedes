@@ -1,11 +1,12 @@
+package helpers;
 
-public class RequestLine 
+public class RequestSpecificationLine 
 {
 	private String method;
 	private String requestURI;
 	private String httpVersion;
 	
-	public RequestLine(String entireLine)
+	public RequestSpecificationLine(String entireLine)
 	{
 		String[] brokeLine = entireLine.split(" ");
 		

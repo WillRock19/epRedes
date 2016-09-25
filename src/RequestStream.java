@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import helpers.RequestHeader;
+
 public class RequestStream
 {
 	private InputStream byteReader;
 	private DataOutputStream outputStream;
 	private BufferedReader lineReader;
-	private RequestLine requestLine;
+	private RequestHeader requestHeader;
 	
 	public RequestStream(Socket socket) throws Exception
 	{
@@ -20,9 +22,9 @@ public class RequestStream
 				
 		//Create line reader to read input char stream
 		defineLineReader();
-				
-		// Read request line from HTTP client request.
-		defineRequestLine();
+		
+		//Create object that represents important properties in request header
+		defineRequestHeader();
 	}
 	
 	public void printRequestLine()
@@ -46,17 +48,22 @@ public class RequestStream
 	
 	public String requestLine()
 	{
-		return requestLine.FullValue();
+		return requestHeader.RequestLine().FullValue();
 	}
 	
 	public String requestedURI()
 	{
-		return requestLine.URI();
+		return requestHeader.RequestLine().URI();
 	}
 	
 	public String requestedMethod()
 	{
-		return requestLine.Method();
+		return requestHeader.RequestLine().Method();
+	}
+	
+	public RequestHeader RequestHeader()
+	{
+		return requestHeader;
 	}
 	
 	public DataOutputStream outputStream()
@@ -93,6 +100,10 @@ public class RequestStream
 		return outputStream.size();
 	}
 	
+	public BufferedReader lineReader()
+	{
+		return lineReader;
+	}
 	
 	
 /*	public ArrayList<String> getAllLinesInRequest() throws Exception
@@ -110,8 +121,10 @@ public class RequestStream
 	}
 	*/
 	
-	
-	
+	private void defineRequestHeader()
+	{
+		requestHeader = new RequestHeader(lineReader);
+	}
 	
 	
 	private void defineByteReader(Socket socket) throws Exception
@@ -129,34 +142,8 @@ public class RequestStream
 		lineReader = new BufferedReader(new InputStreamReader(byteReader));
 	}
 	
-	private void defineRequestLine() throws Exception
-	{
-		requestLine = new RequestLine(lineReader.readLine());
-	}
-	
 	private byte[] createOneKbyteArray()
 	{
 		return new byte[1024];
-	}
-	
-	private void defineHeaderJson() throws Exception
-	{
-		String newLine = lineReaderInString();
-
-		
-		
-	}
-	
-	private String lineReaderInString() throws Exception
-	{
-		StringBuilder sb = new StringBuilder();
-
-	    String line;
-	    while ((line = lineReader.readLine()) != null) 
-	    {
-	        sb.append(line);
-	    }
-	    
-	    return sb.toString();
 	}
 }

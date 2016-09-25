@@ -35,17 +35,26 @@ final class HttpRequest implements Runnable
 		log.printLogInfo("Requested method: " + stream.requestedMethod());
 		log.printLogInfo("Requested URI file: " + stream.requestedURI());
 		
-		stream.printRequestLine();
-		stream.printRequestHeaderLines();
+/*		stream.printRequestLine();
+		stream.printRequestHeaderLines();*/
+		
+		Authenticator authenticator = new Authenticator(stream);
+		
+		if(!authenticator.requestedUriIsRestrict())
+		{
+			
+		}
+		else
+		{
+			authenticator.AuthenticateAccess();
+		}
 		
 		
 		
 		
 		
 		
-		
-		
-		if(stream.requestedURI().toLowerCase().contains("restrict-access".toLowerCase()))
+/*		if(stream.requestedURI().toLowerCase().contains("restrict-access".toLowerCase()))
 		{
 			String CRLF = "\r\n";
 			String statusLine = "HTTP/1.0 401" + CRLF;
@@ -55,7 +64,7 @@ final class HttpRequest implements Runnable
 			stream.sendToOutputStream(statusLine);
 			stream.sendToOutputStream(WWW_Authentication);
 			stream.sendToOutputStream(CRLF);
-		}
+		}*/
 		
 		
 		
@@ -83,8 +92,8 @@ final class HttpRequest implements Runnable
 		
 		
 		
-/*		
-		//Create builder of requested file
+		
+/*		//Create builder of requested file
 		RequestFileBuilder fileBuilder = new RequestFileBuilder(stream);
 		fileBuilder.openRequestedFile();
 		
