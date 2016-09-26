@@ -37,7 +37,7 @@ public class HTMLGenerator
 	
 	private String defineListPageTitle(String directoryName)
 	{
-		return String.format("Listing %s Directory", directoryName);
+		return String.format("Listing %s Directory", defineDirectoryName(directoryName));
 	}
 	
 	private String createHeadTag(String titleContent)
@@ -84,11 +84,20 @@ public class HTMLGenerator
 	
 	private String createContainerDiv(ArrayList<String> list, String directoryName)
 	{
-		return String.format("<DIV class='container'> %s %s </DIV>", createH2Tag("Arquivos do diretório: "), createUlTag(list, directoryName));
+		return String.format("<DIV class='container'> %s %s </DIV>", createH2Tag("Arquivos do diretório: " + defineDirectoryName(directoryName)), createUlTag(list, directoryName));
 	}
 	
 	private String createH2Tag(String headerName)
 	{
 		return String.format("<H2> %s </H2>", headerName);
+	}
+	
+	private String defineDirectoryName(String name)
+	{
+		if(name.equals("./"))
+			return " root ";
+		
+		else
+			return name;
 	}
 }
