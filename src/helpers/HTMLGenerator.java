@@ -14,17 +14,26 @@ public class HTMLGenerator
 		return headerOpen + createHeadTag("Not Found") + createBodyTag("Not Found") + headerClose;  
 	}
 	
-	public String IndexPage()
+	public String IndexPage(String text)
 	{ 
-		return headerOpen + createHeadTag("Index") + createBodyTag("This is the Index Page") + headerClose;
+		String containerText = "<H2>This is the Index Page.</H2>" + String.format("<DIV> %s </DIV>", text);
+		return headerOpen + createHeadTag("Index") + createBodyTag(createContainerDiv(containerText)) + headerClose;
 	}
 	
 	public String listPage(ArrayList<String> list, String directoryName)
 	{ 
 		return headerOpen + createHeadTag(defineListPageTitle(directoryName)) 
-						  + createBodyTag(createContainerDivForListPage(list, directoryName)) 
+						  + createBodyTag(createContainerDiv(list, directoryName)) 
 						  + headerClose ;  
 	}
+	
+	public String ForbiddenPage(String text)
+	{ 
+		String containerText = "<H2>Access Forbidden.</H2>" + String.format("<DIV> %s </DIV>", text);
+		return headerOpen + createHeadTag("Access Denied") + createBodyTag(createContainerDiv(containerText)) + headerClose;  
+	}
+	
+	
 	
 	private String defineListPageTitle(String directoryName)
 	{
@@ -68,7 +77,12 @@ public class HTMLGenerator
 		return String.format("<a href='%s'> %s </a>", (directoryName + "/" + content), content);
 	}
 	
-	private String createContainerDivForListPage(ArrayList<String> list, String directoryName)
+	private String createContainerDiv(String content)
+	{
+		return String.format("<DIV class='container'> %s </DIV>", content);
+	}
+	
+	private String createContainerDiv(ArrayList<String> list, String directoryName)
 	{
 		return String.format("<DIV class='container'> %s %s </DIV>", createH2Tag("Arquivos do diretório: "), createUlTag(list, directoryName));
 	}

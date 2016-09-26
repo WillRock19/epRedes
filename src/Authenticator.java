@@ -4,18 +4,22 @@
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import helpers.PropertiesHandler;
+
 public class Authenticator 
 {
-	private String validCredentials = "admin:senha123";
+	private String validCredentials;
 	private String restrictUrl = "restrict-access";
 	private RequestStream requestStream;
 	private ResponseMessage messager;
 	
 	
-	public Authenticator(RequestStream requestStream)
+	public Authenticator(RequestStream requestStream) throws Exception
 	{
 		this.requestStream = requestStream;
 		this.messager = new ResponseMessage();
+		
+		defineValidCredentials();
 	}
 	
 	public boolean requestedUriIsRestrict()
@@ -77,5 +81,11 @@ public class Authenticator
 	private boolean textIsBase64Encoded(String text)
 	{
 		return text.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$");
+	}
+	
+	private void defineValidCredentials() throws Exception
+	{
+		PropertiesHandler prop = new PropertiesHandler();
+		validCredentials = prop.getProperty("prop.server.login") + ":" + prop.getProperty("prop.server.password");
 	}
 }
