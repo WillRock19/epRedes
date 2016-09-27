@@ -50,7 +50,7 @@ public class LogHandler
 	
 	public void printInLogTheConnectionInformation(Socket socket)
 	{
-		String clientIP = socket.getRemoteSocketAddress().toString();
+		String clientIP = socket.getInetAddress().getHostAddress();
 		
 		setHeaderFormatter(clientIP);
 		printLogInfo("Request captured time: " + new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss").format(new Date()));

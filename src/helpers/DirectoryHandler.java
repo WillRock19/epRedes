@@ -47,7 +47,7 @@ public class DirectoryHandler
 	
 	private boolean itemIsRestrict(String item)
 	{
-		return itemIsInternalEclipse(item) || item.equals(".git") /*|| itemIsLockFileFromLog(item)*/;
+		return itemIsInternalEclipse(item) || item.equals(".git") || itemIsLockFileFromLog(item);
 	}
 	
 	private boolean itemIsInternalEclipse(String item)
@@ -55,8 +55,8 @@ public class DirectoryHandler
 		return item.equals("bin") || item.equals("src") || item.equals(".settings") || item.equals(".classpath") || item.equals(".project");
 	}
 	
-/*	private boolean itemIsLockFileFromLog(String item)
+	private boolean itemIsLockFileFromLog(String item)
 	{
-		return item.endsWith(.matches("bin"))
-	}*/
+		return item.toLowerCase().endsWith(".lck");
+	}
 }

@@ -49,7 +49,7 @@ public class ResponseMessage
 	public void defineNotAuthenticatedProperties()
 	{
 		messageProperties.setStatusLine("HTTP/1.0 401");
-		messageProperties.setAuthentication("WWW-Authenticate: Basic realm='myRealm'");
+		messageProperties.setAuthentication("WWW-Authenticate: Basic realm='Insira suas credenciais'");
 	}
 	
 	public MessageProperties properties()
@@ -71,7 +71,7 @@ public class ResponseMessage
 			
 			case  "2":
 				defineForbiddenProperties();
-				defineEntityBodyAsForbiddenPage("Ddata.properties listType is defined with 2. Folder elements cannot be listed!");
+				defineEntityBodyAsForbiddenPage("Data.properties listType is defined with 2. Folder elements cannot be listed!");
 				break;
 				
 			case  "3":
